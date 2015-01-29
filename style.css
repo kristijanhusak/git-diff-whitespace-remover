@@ -1,0 +1,50 @@
+body {
+    font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+    font-size: 100%;
+    width: 150px;
+    text-align: center;
+}
+
+.toggle-button {
+    font-weight: bold;
+    padding: 8px;
+    display: block;
+    width: 75%;
+    margin: 0 auto;
+    font-size: 14px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 2px;
+    text-decoration: none;
+}
+
+.toggle-button:hover {
+    cursor: pointer;
+}
+
+.toggle-button[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.toggle-button.set-on {
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+
+.toggle-button.set-on:hover {
+    border-color: #2F9C2F;
+}
+
+.toggle-button.set-off {
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+
+.toggle-button.set-off:hover {
+    border-color: #B32E29;
+}
