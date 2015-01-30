@@ -61,6 +61,8 @@ function hasQueryString(url) {
 }
 
 /**
+ * Update url manually
+ *
  * @param {Object} Tab - currently selected tab
  */
 function updateUrl(tab) {
@@ -88,8 +90,10 @@ function updateUrl(tab) {
 
 /**
  * @param {String} text - used for badge in the icon
+ * @param {Object} btn - Btn in the popup
+ * @param {Object} autoSetCb - checkbox in the popup for automatic setting
  */
-function setBadgeAndBtn(text, btn) {
+function setBadgeAndBtn(text, btn, autoSetCb) {
   text = text || '';
 
   if (text === '') {
@@ -98,6 +102,9 @@ function setBadgeAndBtn(text, btn) {
       btn.setAttribute('disabled', true);
       btn.classList.remove('set-on', 'set-off');
     }
+    if (autoSetCb) {
+      autoSetCb.setAttribute('disabled', true);
+    }
     return chrome.browserAction.setBadgeText({text: ''});
   }
 
@@ -105,9 +112,13 @@ function setBadgeAndBtn(text, btn) {
     btn.removeAttribute('disabled');
   }
 
+  if (autoSetCb) {
+    autoSetCb.removeAttribute('disabled');
+  }
+
   if (text === 'on') {
     if (btn) {
-      btn.innerHTML = 'Disable';
+      btn.innerHTML = 'Show whitespace';
       btn.classList.remove('set-on');
       btn.classList.add('set-off');
     }
@@ -117,7 +128,7 @@ function setBadgeAndBtn(text, btn) {
 
   if (text === 'off') {
     if (btn) {
-      btn.innerHTML = 'Enable';
+      btn.innerHTML = 'Hide whitespace';
       btn.classList.remove('set-off');
       btn.classList.add('set-on');
     }
@@ -134,19 +145,56 @@ function currentTab(callback) {
 }
 
 /**
+ * Function used in beforeRequest when automatic is set
+ * @param {String} url - requested url
+ * @param {Boolean} autoUpdate - is automatic update enabled
+ */
+function requestUpdateUrl(url, autoUpdate) {
+  if (!autoUpdate) {
+    return;
+  }
+
+  if (hasQueryString(url)) {
+    return;
+  }
+
+  var queryString = !urlHas(url, '?') ? '?w=1' : '&w=1';
+
+  return url + queryString;
+}
+
+/**
+ * @param {Boolean} flag - save automatic setup setting to storage
+ * @param {function()} callback - triggered after save is finished
+ */
+function setAutomatic(flag, callback) {
+  chrome.storage.local.set({'gitDiffWhitespaceRemover': flag}, callback);
+}
+
+/**
+ * @param {function(isAutomatic)} callback - fetch if automatic set and trigger
+ */
+function isAutomatic(callback) {
+  chrome.storage.local.get('gitDiffWhitespaceRemover', function(data) {
+    callback(data.gitDiffWhitespaceRemover);
+  });
+}
+
+/**
  * @param {Object} tab - currently selected tab
  * @param {Object} btn - button to toggle on and off(Optional)
+ * @param {Object} autoSetCb - checkbox to save automatic setting
  */
-function updatePopupState(tab, btn) {
-    var url = tab.url;
+function updatePopupState(tab, btn, autoSetCb) {
+  var url = tab.url;
 
-    if (!isValidUrl(url)) {
-      return setBadgeAndBtn(null, btn);
-    }
+  if (!isValidUrl(url)) {
+    return setBadgeAndBtn(null, btn, autoSetCb);
+  }
 
-    if (hasQueryString(url)) {
-      return setBadgeAndBtn('on', btn);
-    }
+  if (hasQueryString(url)) {
+    return setBadgeAndBtn('on', btn, autoSetCb);
+  }
 
-    return setBadgeAndBtn('off', btn);
+  return setBadgeAndBtn('off', btn, autoSetCb);
 }

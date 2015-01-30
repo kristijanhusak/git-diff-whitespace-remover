@@ -1,27 +1,42 @@
-/* global chrome, updateUrl, updatePopupState, currentTab */
+/* global chrome */
+/* global updateUrl */
+/* global updatePopupState */
+/* global currentTab */
+/* global setAutomatic */
+/* global isAutomatic */
 'use strict';
 
 function onDomLoaded() {
   var btn = document.getElementById('toggle-button');
+  var autoSet = document.getElementById('auto-set');
+  var currTab;
 
   currentTab(function(tab) {
-    updatePopupState(tab, btn);
+    currTab = tab;
+    updatePopupState(currTab, btn, autoSet);
+  });
+
+  isAutomatic(function(autoUpdate) {
+    if (autoUpdate) {
+      autoSet.checked = true;
+      btn.style.display = 'none';
+    } else {
+      autoSet.checked = false;
+      btn.style.display = 'block';
+    }
+  });
+
+  autoSet.addEventListener('change', function() {
+    setAutomatic(this.checked, function() {
+      chrome.extension.getBackgroundPage().window.location.reload();
+      btn.click();
+    });
   });
 
   btn.addEventListener('click', function(e) {
     e.preventDefault();
-
-    currentTab(function(tab) {
-      updateUrl(tab);
-      window.close();
-    });
-  });
-
-  /**
-   * Listener for message events
-   */
-  chrome.runtime.onMessage.addListener(function(request) {
-    chrome.tabs.update(request.tab.id, {url: request.redirect});
+    updateUrl(currTab);
+    window.close();
   });
 }
 

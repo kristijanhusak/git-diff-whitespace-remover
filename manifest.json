@@ -1,14 +1,14 @@
 {
   "manifest_version": 2,
 
-  "name": "Bitbucket whitespace remover",
+  "name": "Git diff whitespace remover",
   "description": "This extension removes whitespace from the diff by adding ?w=1 to url",
   "version": "1.0",
 
   "browser_action": {
     "default_icon": "icon.png",
     "default_popup": "popup.html",
-    "default_title": "Toggle bitbucket whitespace remover"
+    "default_title": "Toggle git diff whitespace remover"
   },
   "permissions": [
     "activeTab",
@@ -17,7 +17,9 @@
     "webRequest",
     "webRequestBlocking",
     "http://bitbucket.org/*",
-    "https://bitbucket.org/*"
+    "https://bitbucket.org/*",
+    "http://github.com/*",
+    "https://github.com/*"
   ],
   "background": {
     "scripts": ["helpers.js", "background.js"]
