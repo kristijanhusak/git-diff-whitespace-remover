@@ -27,6 +27,8 @@ body {
 .toggle-button[disabled] {
     opacity: 0.5;
     pointer-events: none;
+    border-color: gray;
+    color: gray;
 }
 
 .toggle-button.set-on {
