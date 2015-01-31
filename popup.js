@@ -4,6 +4,7 @@
 /* global currentTab */
 /* global setAutomatic */
 /* global isAutomatic */
+/* global isValidUrl */
 'use strict';
 
 function onDomLoaded() {
@@ -13,7 +14,7 @@ function onDomLoaded() {
 
   currentTab(function(tab) {
     currTab = tab;
-    updatePopupState(currTab, btn, autoSet);
+    updatePopupState(currTab, btn);
   });
 
   isAutomatic(function(autoUpdate) {
@@ -29,7 +30,10 @@ function onDomLoaded() {
   autoSet.addEventListener('change', function() {
     setAutomatic(this.checked, function() {
       chrome.extension.getBackgroundPage().window.location.reload();
-      btn.click();
+      if (isValidUrl(currTab.url)) {
+        return btn.click();
+      }
+      window.location.reload();
     });
   });
 

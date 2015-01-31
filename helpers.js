@@ -91,9 +91,8 @@ function updateUrl(tab) {
 /**
  * @param {String} text - used for badge in the icon
  * @param {Object} btn - Btn in the popup
- * @param {Object} autoSetCb - checkbox in the popup for automatic setting
  */
-function setBadgeAndBtn(text, btn, autoSetCb) {
+function setBadgeAndBtn(text, btn) {
   text = text || '';
 
   if (text === '') {
@@ -102,18 +101,11 @@ function setBadgeAndBtn(text, btn, autoSetCb) {
       btn.setAttribute('disabled', true);
       btn.classList.remove('set-on', 'set-off');
     }
-    if (autoSetCb) {
-      autoSetCb.setAttribute('disabled', true);
-    }
     return chrome.browserAction.setBadgeText({text: ''});
   }
 
   if (btn) {
     btn.removeAttribute('disabled');
-  }
-
-  if (autoSetCb) {
-    autoSetCb.removeAttribute('disabled');
   }
 
   if (text === 'on') {
@@ -183,18 +175,17 @@ function isAutomatic(callback) {
 /**
  * @param {Object} tab - currently selected tab
  * @param {Object} btn - button to toggle on and off(Optional)
- * @param {Object} autoSetCb - checkbox to save automatic setting
  */
-function updatePopupState(tab, btn, autoSetCb) {
+function updatePopupState(tab, btn) {
   var url = tab.url;
 
   if (!isValidUrl(url)) {
-    return setBadgeAndBtn(null, btn, autoSetCb);
+    return setBadgeAndBtn(null, btn);
   }
 
   if (hasQueryString(url)) {
-    return setBadgeAndBtn('on', btn, autoSetCb);
+    return setBadgeAndBtn('on', btn);
   }
 
-  return setBadgeAndBtn('off', btn, autoSetCb);
+  return setBadgeAndBtn('off', btn);
 }
