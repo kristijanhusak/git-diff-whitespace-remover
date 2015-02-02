@@ -30,18 +30,20 @@ function isValidUrl(url) {
 
   if (urlHas(url, 'github.com')) {
 
-    if (urlHas(url, 'commits/') || urlHas(url, 'pulls')) {
+    if (urlHas(url, ['commits/', 'pulls'])) {
       return false;
     }
 
-    if (urlHas(url, 'commit') || urlHas(url, 'pull')) {
+    if (urlHas(url, ['commit', 'pull'])) {
       return true;
     }
   }
 
   if (urlHas(url, 'bitbucket.org')) {
 
-    if (urlHas(url, ['pull-requests', 'commits/all', 'commits/branch'])) {
+    if (urlHas(url,
+      ['pull-requests', 'commits/all', 'commits/branch', 'comment-'])
+    ) {
       return false;
     }
 
@@ -142,7 +144,7 @@ function currentTab(callback) {
  * @param {Boolean} autoUpdate - is automatic update enabled
  */
 function requestUpdateUrl(url, autoUpdate) {
-  if (!autoUpdate) {
+  if (!autoUpdate || !isValidUrl(url)) {
     return;
   }
 
