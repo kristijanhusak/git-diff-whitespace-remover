@@ -42,7 +42,7 @@ function isValidUrl(url) {
   if (urlHas(url, 'bitbucket.org')) {
 
     if (urlHas(url,
-      ['pull-requests', 'commits/all', 'commits/branch', 'comment-'])
+      ['pull-requests', 'commits/all', 'commits/branch'])
     ) {
       return false;
     }
@@ -144,12 +144,12 @@ function currentTab(callback) {
  * @param {Boolean} autoUpdate - is automatic update enabled
  */
 function requestUpdateUrl(url, autoUpdate) {
-  if (!autoUpdate || !isValidUrl(url)) {
-    return;
+  if (!autoUpdate || !isValidUrl(url) || urlHas(url, 'comment-')) {
+    return url;
   }
 
   if (hasQueryString(url)) {
-    return;
+    return url;
   }
 
   var queryString = !urlHas(url, '?') ? '?w=1' : '&w=1';
