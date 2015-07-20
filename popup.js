@@ -10,7 +10,7 @@
 function onDomLoaded() {
   var btn = document.getElementById('toggle-button');
   var autoSet = document.getElementById('auto-set');
-  var currTab;
+  var currTab = null;
 
   currentTab(function(tab) {
     currTab = tab;

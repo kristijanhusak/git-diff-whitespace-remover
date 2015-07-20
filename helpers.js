@@ -3,6 +3,25 @@
 'use strict';
 
 /**
+ * Split url by hash so it can be properly constructed
+ */
+function splitByHash(url) {
+  if (url.indexOf('#') !== -1) {
+    var urlParts = url.split('#');
+
+    return {
+      url: urlParts[0],
+      hash: '#' + urlParts[1]
+    };
+  }
+
+  return {
+    url: url,
+    hash: ''
+  };
+}
+
+/**
  * @param {String} url
  * @param {String|Array} needle - string or array to find in the url
  */
@@ -40,7 +59,6 @@ function isValidUrl(url) {
   }
 
   if (urlHas(url, 'bitbucket.org')) {
-
     if (urlHas(url,
       ['pull-requests', 'commits/all', 'commits/branch'])
     ) {
@@ -68,7 +86,8 @@ function hasQueryString(url) {
  * @param {Object} Tab - currently selected tab
  */
 function updateUrl(tab) {
-  var url = tab.url;
+  var urlParts = splitByHash(tab.url);
+  var url = urlParts.url;
 
   if (hasQueryString(url)) {
 
@@ -77,7 +96,7 @@ function updateUrl(tab) {
     var newUrl = url.replace(toBeDeleted, '');
 
     return chrome.runtime.sendMessage({
-      redirect: newUrl,
+      redirect: newUrl + urlParts.hash,
       tab: tab
     });
   }
@@ -85,7 +104,7 @@ function updateUrl(tab) {
   var queryString = !urlHas(url, '?') ? '?w=1' : '&w=1';
 
   return chrome.runtime.sendMessage({
-    redirect: url + queryString,
+    redirect: url + queryString + urlParts.hash,
     tab: tab
   });
 }
@@ -135,7 +154,9 @@ function setBadgeAndBtn(text, btn) {
  * @param {function(tab)} callback - function triggered after tab is fetched
  */
 function currentTab(callback) {
-  chrome.tabs.getSelected(null, callback);
+  chrome.tabs.query({active: true}, function(tabs) {
+    callback(tabs[0]);
+  });
 }
 
 /**
@@ -144,7 +165,7 @@ function currentTab(callback) {
  * @param {Boolean} autoUpdate - is automatic update enabled
  */
 function requestUpdateUrl(url, autoUpdate) {
-  if (!autoUpdate || !isValidUrl(url) || urlHas(url, 'comment-')) {
+  if (!autoUpdate || !isValidUrl(url)) {
     return url;
   }
 
@@ -152,9 +173,11 @@ function requestUpdateUrl(url, autoUpdate) {
     return url;
   }
 
-  var queryString = !urlHas(url, '?') ? '?w=1' : '&w=1';
+  var urlParts = splitByHash(url);
 
-  return url + queryString;
+  var queryString = !urlHas(urlParts.url, '?') ? '?w=1' : '&w=1';
+
+  return urlParts.url + queryString + urlParts.hash;
 }
 
 /**
