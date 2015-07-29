@@ -60,12 +60,12 @@ function isValidUrl(url) {
 
   if (urlHas(url, 'bitbucket.org')) {
     if (urlHas(url,
-      ['pull-requests', 'commits/all', 'commits/branch'])
+      ['commits/all', 'commits/branch'])
     ) {
       return false;
     }
 
-    if (urlHas(url, ['commits', 'pull-request'])) {
+    if (urlHas(url, ['commits', 'pull-requests'])) {
       return true;
     }
   }

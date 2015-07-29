@@ -25,7 +25,7 @@ isAutomatic(function(autoUpdate) {
     };
   }, {
     urls: [
-      '*://bitbucket.org/*/pull-request/*',
+      '*://bitbucket.org/*/pull-requests/*',
       '*://bitbucket.org/*/commits/*',
       '*://github.com/*/pull/*',
       '*://github.com/*/commit/*'
